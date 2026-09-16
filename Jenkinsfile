@@ -37,17 +37,21 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh '''
-                        sonar-scanner \
-                          -Dsonar.projectKey=seclock \
-                          -Dsonar.projectName=seclock \
-                          -Dsonar.sources=.
-                    '''
-                }
+    steps {
+        withSonarQubeEnv('sonarqube') {
+            script {
+                def scannerHome = tool 'SonarScanner'
+
+                sh """
+                    ${scannerHome}/bin/sonar-scanner \
+                      -Dsonar.projectKey=seclock \
+                      -Dsonar.projectName=seclock \
+                      -Dsonar.sources=.
+                """
             }
         }
+    }
+}
 
         stage('Docker Build') {
             steps {
